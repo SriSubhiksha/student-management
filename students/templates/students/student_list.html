@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Student Management System</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Your CSS Here -->
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            display: flex;
+            min-height: 100vh;
+            background: #f4f6f9;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        .sidebar {
+            width: 260px;
+            background: #1e293b;
+            color: white;
+            padding-top: 20px;
+        }
+        
+        .logo {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .menu-btn {
+            width: 100%;
+            border: none;
+            background: none;
+            color: white;
+            text-align: left;
+            padding: 15px 20px;
+            font-size: 17px;
+        }
+        
+        .submenu {
+            display: block;
+            background: #273549;
+        }
+        
+        .submenu a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 12px 40px;
+        }
+        
+        .submenu a:hover {
+            background: #3b4d68;
+        }
+        
+        .content {
+            flex: 1;
+            padding: 30px;
+        }
+        
+        .page-title {
+            font-size: 30px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .table-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .student-link {
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .student-link:hover {
+            color: #0d6efd;
+        }
+        
+        .table-striped>tbody>tr:nth-of-type(odd)>td {
+            background: #a4efea !important;
+        }
+        
+        .table-striped>tbody>tr:nth-of-type(even)>td {
+            background: #eaeff2 !important;
+        }
+        
+        .table-hover>tbody>tr:hover>td {
+            background: #dbeafe !important;
+        }
+        
+        .table th,
+        .table td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+        <div class="logo">
+            Student Management System
+        </div>
+
+        <button class="menu-btn">
+            Students
+        </button>
+
+        <div class="submenu">
+
+            <a href="{% url 'student_list' %}">
+                👨‍🎓 View Students
+            </a>
+
+            <a href="{% url 'add_student' %}">
+                ➕ Add Student
+            </a>
+
+            <a href="#" data-bs-toggle="modal" data-bs-target="#searchModal">
+                🔍 Search Students
+            </a>
+            <a href="{% url 'mail_templates' %}">
+                📧 Mail Format
+            </a>
+            <a href="{% url 'reset_mail_templates' %}">
+                🔄 Reset Mail Format
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+        <div class="page-title">
+            Student Records
+        </div>
+
+        <!-- Your Table Code Here -->
+        <div class="table-card">
+
+            <table class="table table-striped table-hover">
+
+                <thead class="table-dark">
+
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Age</th>
+                        <th>Course</th>
+                        <th>Action</th>
+                        <th>Message</th>
+                        <th>Marks</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for student in students %}
+
+                    <tr>
+
+                        <td>{{ student.student_id }}</td>
+
+                        <td>
+                            <a href="{% url 'student_detail' student.id %}" class="student-link">
+                                {{ student.name }}
+                            </a>
+                        </td>
+
+                        <td>{{ student.email }}</td>
+                        <td>{{ student.phone }}</td>
+                        <td>{{ student.age }}</td>
+                        <td>{{ student.course }}</td>
+
+                        <td>
+
+                            <a href="{% url 'edit_student' student.id %}" class="btn btn-secondary btn-sm">
+                                Edit
+                            </a>
+
+                            <a href="{% url 'delete_student' student.id %}" class="btn btn-danger btn-sm">
+                                Delete
+                            </a>
+
+                        </td>
+
+                        <td>
+
+                            <a href="{% url 'send_student_mail' student.id %}" class="btn btn-info btn-sm">
+                                Send Mail
+                            </a>
+
+                        </td>
+
+                        <td>
+                            <a href="{% url 'enter_marks' student.id %}" class="btn btn-success btn-sm">
+                                Entry Marks
+                            </a> {% if student.studentmarks %}
+
+                            <a href="{% url 'show_marks' student.id %}" class="btn btn-info btn-sm">
+
+                              Show Marks
+
+</a> {% else %}
+
+                            <button class="btn btn-secondary btn-sm" disabled>
+
+    Show Marks
+
+</button> {% endif %}
+
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="8" class="text-center">
+                            No Students Found
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+            <div class="table-card">
+
+                <table class="table table-striped table-hover">
+
+                    <!-- Table Content -->
+
+                </table>
+
+                <div class="dropdown">
+                    <div class="text-end mt-3">
+
+                        <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
+
+        Download File
+
+    </button>
+
+                        <ul class="dropdown-menu">
+
+                            <li>
+
+                                <a class="dropdown-item" href="{% url 'download_pdf' %}">
+
+                Download PDF
+
+            </a>
+
+                            </li>
+
+                            <li>
+
+                                <a class="dropdown-item" href="{% url 'download_excel' %}">
+
+                Download Excel
+
+            </a>
+
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    </div>
+
+    <!-- Search Modal Code Here -->
+    <!-- Search Modal -->
+
+    <div class="modal fade" id="searchModal" tabindex="-1">
+
+        <div class="modal-dialog modal-lg">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title">
+                        Search Students
+                    </h5>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+                <form method="GET" action="{% url 'student_list' %}">
+
+                    <div class="modal-body">
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+                                <label>Student ID</label>
+                                <input type="text" name="student_id" class="form-control">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>Name</label>
+                                <input type="text" name="name" class="form-control">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>Email</label>
+                                <input type="text" name="email" class="form-control">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>Phone</label>
+                                <input type="text" name="phone" class="form-control">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>Age</label>
+                                <input type="number" name="age" class="form-control">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>Course</label>
+                                <input type="text" name="course" class="form-control">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+
+                        <a href="{% url 'student_list' %}" class="btn btn-secondary">
+                            Reset
+                        </a>
+
+                        <button type="submit" class="btn btn-primary">
+                            Apply Filter
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    {% if messages %} {% for message in messages %}
+
+    <script>
+        Swal.fire({
+
+            icon: 'success',
+
+            title: 'Success',
+
+            text: '{{ message }}',
+
+            showConfirmButton: false,
+
+            timer: 2000,
+
+            timerProgressBar: true
+
+        });
+    </script>
+
+    {% endfor %} {% endif %}
+
+</body>
+
+</html>
